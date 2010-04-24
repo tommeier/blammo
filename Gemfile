@@ -1,5 +1,6 @@
 source :rubygems
 
+gem 'fancypath'
 gem 'git'
 gem 'tilt'
 gem 'thor'

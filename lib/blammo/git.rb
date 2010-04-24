@@ -20,7 +20,6 @@ module Blammo
     end
 
     private
-
       def self.each_commit(log, &block)
         chunk = 0
 
