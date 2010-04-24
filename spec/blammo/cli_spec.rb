@@ -6,4 +6,10 @@ describe Blammo::CLI do
       pending
     end
   end
+
+  describe "#render" do
+    it "should generate the changelog" do
+      pending
+    end
+  end
 end

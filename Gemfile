@@ -5,6 +5,7 @@ gem 'tilt'
 gem 'thor'
 
 group :development do
+  gem 'hirb'
   gem 'jeweler'
   gem 'rake'
 end
