@@ -7,10 +7,13 @@ module Blammo
   class CLI < Thor
     desc "generate [PATH]", "Generates a changelog.yml file"
     def generate(path = ".")
+      # TODO: find current SHA
       releases = []
-      date = Date.today.strftime("%Y%m%d")
-      releases << {date => Git.commits(path)}
-      #commits.to_yaml(open("changelog.yml", "w"))
+      release  = Date.today.strftime("%Y%m%d")
+      commits  = Git.commits(path)
+
+      releases << {release => commits}
+      #releases.to_yaml(open("changelog.yml", "w"))
       puts releases.to_yaml
     end
 
