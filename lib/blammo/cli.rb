@@ -50,6 +50,7 @@ module Blammo
     end
 
     def self.find_last_sha(releases)
+      return if releases.empty?
       release = releases.first
       commits = release.first.last
       commit  = commits.detect {|commit| commit.is_a?(Hash)}
