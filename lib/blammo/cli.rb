@@ -13,7 +13,7 @@ module Blammo
       changelog_path = repo_path.to_fancypath.dir / CHANGELOG_FILE_NAME
       releases = changelog_path.exists? ? YAML.load_file(changelog_path) : []
 
-      last_sha = find_last_sha(releases)
+      last_sha = self.class.find_last_sha(releases)
       commits  = Git.commits(repo_path, last_sha)
 
       unless commits.empty?
@@ -49,10 +49,11 @@ module Blammo
       puts template.render(nil, :date => Date.today)
     end
 
-    private
-      def find_last_sha(releases)
-        # TODO: don't use magic!
-        releases.first.first.last.first.first.first
-      end
+    def self.find_last_sha(releases)
+      release = releases.first
+      commits = release.first.last
+      commit  = commits.detect {|commit| commit.is_a?(Hash)}
+      commit ? commit.first.first : nil
+    end
   end
 end
