@@ -1,3 +1,10 @@
 # CHANGELOG
 
-<%= date %>
+<% releases.each do |release_hash| %>
+  <% release, commits = release_hash.first %>
+## <%= release %>
+  <% commits.each do |commit_hash| %>
+    <% sha, message = commit_hash.first %>
+* <%= message %>
+  <% end %>
+<% end %>
