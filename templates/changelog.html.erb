@@ -10,7 +10,7 @@
       <ul>
         <% commits.each do |commit_hash| %>
           <% sha, message = commit_hash.first %>
-          <% unless message.empty? %>
+          <% if message && !message.empty? %>
             <li><%= message %></li>
           <% end %>
         <% end %>
