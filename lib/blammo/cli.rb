@@ -13,7 +13,7 @@ module Blammo
     desc "render [PATH]", "Renders the given changelog.yml file"
     def render(path = "changelog.yml")
       changelog     = Changelog.new(path)
-      template_path = __FILE__.to_fancypath.dir / "../../templates/changelog.markdown.erb".to_fancypath
+      template_path = __FILE__.to_fancypath.dir / "../../templates/changelog.html.erb".to_fancypath
       template      = Tilt.new(template_path)
       puts template.render(nil, :changelog => changelog)
     end

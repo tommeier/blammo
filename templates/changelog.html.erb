@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+  <body>
+    <h1>Changelog</h1>
+
+    <% changelog.releases.each do |release_hash| %>
+      <% release, commits = release_hash.first %>
+      <h2><%= release %></h2>
+
+      <ul>
+        <% commits.each do |commit_hash| %>
+          <% sha, message = commit_hash.first %>
+          <% unless message.empty? %>
+            <li><%= message %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    <% end %>
+  </body>
+</html>
