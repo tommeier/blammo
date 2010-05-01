@@ -1,6 +1,5 @@
 source :rubygems
 
-gem 'fancypath'
 gem 'git'
 gem 'thor'
 
@@ -13,4 +12,5 @@ end
 group :test do
   gem 'rr'
   gem 'rspec'
+  gem 'timecop'
 end

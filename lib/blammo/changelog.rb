@@ -6,16 +6,22 @@ module Blammo
 
     def initialize(path)
       releases_hash  = File.exists?(path) ? YAML.load_file(path) : []
-      @releases      = self.class.parse_releases(releases_hash)
+      @releases      = Changelog.parse_releases(releases_hash)
     end
 
     def refresh(dir)
-      commits = Git.commits(dir, self.class.last_sha(@releases))
+      last_sha = Changelog.last_sha(@releases)
+      commits  = Git.commits(dir, last_sha)
+
+      commits = commits.select do |commit|
+        commit.message =~ /\[(ADDED|CHANGED|FIXED)\]/
+      end
 
       unless commits.empty?
         # TODO: allow release name to be specified from CLI.
-        release = Time.now.strftime("%Y%m%d%H%M%S")
-        releases.unshift(release => commits)
+        name    = Time.now.strftime("%Y%m%d%H%M%S")
+        release = Release.new(name, commits)
+        @releases.unshift(release)
       end
     end
 
