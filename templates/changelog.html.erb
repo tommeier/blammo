@@ -3,15 +3,13 @@
   <body>
     <h1>Changelog</h1>
 
-    <% changelog.releases.each do |release_hash| %>
-      <% release, commits = release_hash.first %>
+    <% changelog.releases.each do |release| %>
       <h2><%= release %></h2>
 
       <ul>
-        <% commits.each do |commit_hash| %>
-          <% sha, message = commit_hash.first %>
-          <% if message && !message.empty? %>
-            <li><%= message %></li>
+        <% release.commits.each do |commit| %>
+          <% unless commit.message.blank? %>
+            <li><%= commit %></li>
           <% end %>
         <% end %>
       </ul>
