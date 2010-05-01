@@ -5,21 +5,22 @@ module Blammo
     attr_reader :releases
 
     def initialize(path)
-      @path     = path.to_fancypath
-      releases  = @path.exists? ? YAML.load_file(@path) : []
-      @releases = self.class.parse_releases(releases)
+      releases_hash  = File.exists?(path) ? YAML.load_file(path) : []
+      @releases      = self.class.parse_releases(releases_hash)
     end
 
-    def update
-      commits = Git.commits(@path.dir, self.class.last_sha(@releases))
+    def refresh(dir)
+      commits = Git.commits(dir, self.class.last_sha(@releases))
 
       unless commits.empty?
         # TODO: allow release name to be specified from CLI.
         release = Time.now.strftime("%Y%m%d%H%M%S")
         releases.unshift(release => commits)
       end
+    end
 
-      @releases.to_yaml(open(@path, "w"))
+    def to_yaml(options = {})
+      @releases.to_yaml(options)
     end
 
     def self.last_sha(releases)

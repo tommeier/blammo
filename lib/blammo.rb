@@ -1,5 +1,3 @@
-require 'fancypath'
-
 require 'core_ext/blank'
 
 require 'blammo/changelog'

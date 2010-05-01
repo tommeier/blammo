@@ -1,21 +1,29 @@
 require 'thor'
-require 'tilt'
 
 module Blammo
   class CLI < Thor
-    desc "generate [PATH]", "Generates a changelog.yml file"
-    def generate(path = "changelog.yml")
-      changelog = Changelog.new(path)
-      changelog.update
-      puts changelog.releases.to_yaml
+    include Thor::Actions
+
+    def self.source_root
+      File.dirname(__FILE__)
     end
 
-    desc "render [PATH]", "Renders the given changelog.yml file"
+
+    desc "generate [PATH]", %q(Generates a changelog.yml file (short-cut alias: "g"))
+    map "g" => :generate
+    def generate(path = "changelog.yml")
+      path      = File.expand_path(path, destination_root)
+      changelog = Changelog.new(path)
+      changelog.refresh(destination_root)
+      create_file(path, changelog.to_yaml)
+    end
+
+    desc "render [PATH]", %q(Renders the given changelog.yml file (short-cut alias: "r"))
+    map "r" => :render
     def render(path = "changelog.yml")
-      changelog     = Changelog.new(path)
-      template_path = __FILE__.to_fancypath.dir / "../../templates/changelog.html.erb".to_fancypath
-      template      = Tilt.new(template_path)
-      puts template.render(nil, :changelog => changelog)
+      @changelog = Changelog.new(path)
+      source     = "../../templates/changelog.html.erb"
+      template(source, "changelog.html")
     end
   end
 end
