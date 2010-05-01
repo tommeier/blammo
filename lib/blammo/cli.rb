@@ -8,7 +8,6 @@ module Blammo
       File.dirname(__FILE__)
     end
 
-
     desc "generate [PATH]", %q(Generates a changelog.yml file (short-cut alias: "g"))
     map "g" => :generate
     def generate(path = "changelog.yml")

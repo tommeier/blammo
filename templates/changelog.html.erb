@@ -3,16 +3,14 @@
   <body>
     <h1>Changelog</h1>
 
-    <% @changelog.releases.each do |release| %>
+    <%- @changelog.releases.each do |release| -%>
       <h2><%= release %></h2>
 
       <ul>
-        <% release.commits.each do |commit| %>
-          <% unless commit.message.blank? %>
-            <li><%= commit %></li>
-          <% end %>
-        <% end %>
+        <%- release.each_commit do |commit| -%>
+          <li><%= commit %></li>
+        <%- end -%>
       </ul>
-    <% end %>
+    <%- end -%>
   </body>
 </html>

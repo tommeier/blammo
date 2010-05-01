@@ -9,6 +9,10 @@ module Blammo
     def to_s
       name
     end
+
+    def each_commit(&block)
+      commits.each {|commit| block.call(commit)}
+    end
   end
 
   class Commit < Struct.new(:sha, :message)
