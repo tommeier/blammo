@@ -13,12 +13,13 @@ module Blammo
       # TODO: allow release name to be specified from CLI.
       name     = Time.now.strftime("%Y%m%d%H%M%S")
       release  = Release.new(name)
-      last_sha = Changelog.last_sha(@releases)
-      commits  = Git.commits(dir, last_sha)
+      since    = Changelog.last_sha(@releases)
 
-      # TODO: this should be run as a block within Git.each_commit.
-      commits.each do |commit|
-        release.add_commit(commit) if commit.tag
+      Git.each_commit(dir, since) do |sha, message|
+        if message =~ Commit::COMMIT_RE
+          commit = Commit.new(sha, message)
+          release.add_commit(commit)
+        end
       end
 
       add_release(release)

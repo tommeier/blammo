@@ -4,26 +4,17 @@ module Blammo
   class Git
     CHUNK_SIZE = 10
 
-    # Returns all commits in the given path since the given SHA.
-    def self.commits(path, last_sha = nil)
-      git = ::Git.open(path)
-      log = ::Git::Log.new(git, CHUNK_SIZE)
-
-      log.between(last_sha, "head") if last_sha
-
-      [].tap do |commits|
-        each_commit(log) do |commit|
-          commits << Commit.new(commit.sha, commit.message.strip)
-        end
-      end
-    end
-
-    def self.each_commit(log, &block)
+    # Yield each commit in the given repository since the given SHA.
+    def self.each_commit(path, since = nil, &block)
+      git   = ::Git.open(path)
+      log   = ::Git::Log.new(git, CHUNK_SIZE)
       chunk = 0
+
+      log.between(since, "head") if since
 
       begin
         log.skip(chunk * CHUNK_SIZE)
-        log.each {|commit| block.call(commit)}
+        log.each {|commit| block.call(commit.sha, commit.message.strip)}
         chunk += 1
       end until log.size == 0
     end
