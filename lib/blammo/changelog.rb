@@ -10,19 +10,22 @@ module Blammo
     end
 
     def refresh(dir)
+      # TODO: allow release name to be specified from CLI.
+      name     = Time.now.strftime("%Y%m%d%H%M%S")
+      release  = Release.new(name)
       last_sha = Changelog.last_sha(@releases)
       commits  = Git.commits(dir, last_sha)
 
-      commits = commits.select do |commit|
-        commit.message =~ /^\[(ADDED|CHANGED|FIXED)\]/
+      # TODO: this should be run as a block within Git.each_commit.
+      commits.each do |commit|
+        release.add_commit(commit) if commit.tag
       end
 
-      unless commits.empty?
-        # TODO: allow release name to be specified from CLI.
-        name    = Time.now.strftime("%Y%m%d%H%M%S")
-        release = Release.new(name, commits)
-        @releases.unshift(release)
-      end
+      add_release(release)
+    end
+
+    def add_release(release)
+      @releases.unshift(release) unless release.commits.empty?
     end
 
     def to_yaml(options = {})

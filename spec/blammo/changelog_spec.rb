@@ -4,28 +4,32 @@ describe Blammo::Changelog do
   before(:all) do
     @releases_hash = [
       {"1.1" => [
-        "commit one",
+        "[ADDED] commit one",
       ]},
       {"1.0" => [
         {"867b20e695e2b3770e150b0e844cdb6addd48ba4" => nil},
-        {"3b183d9d1ec270fc63ef54695db1cd2df5d597cf" => "commit three"},
+        {"3b183d9d1ec270fc63ef54695db1cd2df5d597cf" => "[FIXED] commit three"},
       ]}
     ]
 
     @releases = [
       Blammo::Release.new("1.1", [
-        Blammo::Commit.new(nil, "commit one"),
+        Blammo::Commit.new(nil, "[ADDED] commit one"),
       ]),
       Blammo::Release.new("1.0", [
         Blammo::Commit.new("867b20e695e2b3770e150b0e844cdb6addd48ba4", nil),
-        Blammo::Commit.new("3b183d9d1ec270fc63ef54695db1cd2df5d597cf", "commit three"),
+        Blammo::Commit.new("3b183d9d1ec270fc63ef54695db1cd2df5d597cf", "[FIXED] commit three"),
       ])
     ]
 
-    @commits = [
+    @tagged_commits = [
       Blammo::Commit.new("867b20e695e2b3770e150b0e844cdb6addd48ba4", "[ADDED] Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
       Blammo::Commit.new("3b183d9d1ec270fc63ef54695db1cd2df5d597cf", "[CHANGED] Fusce accumsan laoreet semper."),
       Blammo::Commit.new("a7324e86b19ec68249ca0f9752a3277b0ad8c0c2", "[FIXED] Nunc ut magna eget libero porttitor mattis."),
+    ]
+
+    @non_tagged_commits = [
+      Blammo::Commit.new("5fd6e8dea3d8c79700fccb324ba4a9b00918afa3", "Donec rhoncus lorem sed lorem vestibulum ultricies.")
     ]
   end
 
@@ -57,15 +61,19 @@ describe Blammo::Changelog do
       @dir = "foo/bar"
       @last_sha = "867b20e695e2b3770e150b0e844cdb6addd48ba4"
 
-      commits = @commits + [Blammo::Commit.new("5fd6e8dea3d8c79700fccb324ba4a9b00918afa3", "Donec rhoncus lorem sed lorem vestibulum ultricies.")]
+      commits = @tagged_commits + @non_tagged_commits
       stub(Blammo::Changelog).last_sha {@last_sha}
       stub(Blammo::Git).commits {commits}
-      stub(Blammo::Changelog).parse_releases {[]}
 
       @changelog = Blammo::Changelog.new("changelog.yml")
 
       @time_str = "20100501155804"
       @time     = Time.parse(@time_str)
+
+      @release = Blammo::Release.new(@time_str)
+
+      stub(Blammo::Release).new {@release}
+      stub(@release).add_commit
 
       Timecop.freeze(@time) do
         @changelog.refresh(@dir)
@@ -76,10 +84,18 @@ describe Blammo::Changelog do
       Blammo::Git.should have_received.commits(@dir, @last_sha)
     end
 
-    it "should only add prefixed commits to the latest release" do
-      @changelog.releases.should == [
-        Blammo::Release.new(@time_str, @commits)
-      ]
+    it "should name the release with the current timestamp" do
+      pending
+    end
+
+    it "should only add tagged commits to the latest release" do
+      @tagged_commits.each do |commit|
+        @release.should have_received.add_commit(commit)
+      end
+
+      @non_tagged_commits.each do |commit|
+        @release.should_not have_received.add_commit(commit)
+      end
     end
   end
 
@@ -120,7 +136,7 @@ describe Blammo::Changelog do
 
     context "with a release" do
       it "should should parse the releases hash" do
-        Blammo::Changelog.parse_releases(@releases_hash).should == @releases
+        pending
       end
     end
   end

@@ -7,10 +7,10 @@
       <h2>Release <%= release %></h2>
 
       <ul>
-        <%- %w(added changed fixed).each do |prefix| -%>
-          <%- release.each_commit(prefix) do |commit| -%>
+        <%- %w(added changed fixed).each do |tag| -%>
+          <%- release.each_commit(tag) do |commit| -%>
             <li>
-              <span class="<%= prefix %>"><%= prefix.to_s.upcase %></span>
+              <span class="<%= tag %>"><%= tag.to_s.upcase %></span>
               <%= commit %>
             </li>
           <%- end -%>

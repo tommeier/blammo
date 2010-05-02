@@ -1,17 +1,28 @@
 module Blammo
-  class Release < Struct.new(:name, :commits)
+  class Release
+    attr_reader :name, :commits
+
+    def initialize(name, commits = [])
+      @name    = name
+      @commits = commits
+    end
+
+    def add_commit(commit)
+      @commits << commit
+    end
+
     def to_yaml(options = {})
-      {name => commits}.to_yaml(options)
+      {@name => @commits}.to_yaml(options)
     end
 
     def to_s
-      name
+      @name
     end
 
-    def each_commit(prefix = nil, &block)
-      prefix = prefix.to_s.upcase if prefix
-      selected_commits = commits.select {|commit| commit.message =~ /^\[#{prefix}\]/} if prefix
-      selected_commits.each {|commit| block.call(commit)}
+    def each_commit(tag = nil, &block)
+      tag = tag.to_sym
+      commits = @commits.select {|commit| commit.tag == tag} if tag
+      commits.each {|commit| block.call(commit)}
     end
   end
 end
