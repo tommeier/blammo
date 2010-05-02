@@ -14,7 +14,7 @@ module Blammo
       commits  = Git.commits(dir, last_sha)
 
       commits = commits.select do |commit|
-        commit.message =~ /\[(ADDED|CHANGED|FIXED)\]/
+        commit.message =~ /^\[(ADDED|CHANGED|FIXED)\]/
       end
 
       unless commits.empty?

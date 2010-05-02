@@ -1,34 +1,6 @@
 require 'git'
 
 module Blammo
-  class Release < Struct.new(:name, :commits)
-    def to_yaml(options = {})
-      {name => commits}.to_yaml(options)
-    end
-
-    def to_s
-      name
-    end
-
-    def each_commit(&block)
-      commits.each {|commit| block.call(commit)}
-    end
-  end
-
-  class Commit < Struct.new(:sha, :message)
-    def to_yaml(options = {})
-      if sha
-        {sha => message}
-      else
-        message
-      end.to_yaml(options)
-    end
-
-    def to_s
-      message
-    end
-  end
-
   class Git
     CHUNK_SIZE = 10
 
@@ -41,7 +13,7 @@ module Blammo
 
       [].tap do |commits|
         each_commit(log) do |commit|
-          commits << Commit.new(commit.sha, commit.message)
+          commits << Commit.new(commit.sha, commit.message.strip)
         end
       end
     end
