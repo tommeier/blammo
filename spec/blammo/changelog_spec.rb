@@ -30,8 +30,19 @@ describe Blammo::Changelog do
   end
 
   describe "#initialize" do
+    before do
+      @path = "changelog.yml"
+
+      stub(Blammo::Changelog).parse_releases {[]}
+      stub(File).exists? {true}
+      stub(YAML).load_file {[]}
+
+      Blammo::Changelog.new(@path)
+    end
+
     it "should load the given YAML file and parse it" do
-      pending
+      YAML.should have_received.load_file(@path)
+      Blammo::Changelog.should have_received.parse_releases(anything)
     end
 
     context "with an invalid YAML file" do
@@ -44,8 +55,11 @@ describe Blammo::Changelog do
   describe "#refresh" do
     before do
       @dir = "foo/bar"
+      @last_sha = "867b20e695e2b3770e150b0e844cdb6addd48ba4"
 
-      stub(Blammo::Git).commits(@dir, anything) {@commits}
+      commits = @commits + [Blammo::Commit.new("5fd6e8dea3d8c79700fccb324ba4a9b00918afa3", "Donec rhoncus lorem sed lorem vestibulum ultricies.")]
+      stub(Blammo::Changelog).last_sha {@last_sha}
+      stub(Blammo::Git).commits {commits}
       stub(Blammo::Changelog).parse_releases {[]}
 
       @changelog = Blammo::Changelog.new("changelog.yml")
@@ -58,6 +72,10 @@ describe Blammo::Changelog do
       end
     end
 
+    it "should load commits since the last SHA" do
+      Blammo::Git.should have_received.commits(@dir, @last_sha)
+    end
+
     it "should only add prefixed commits to the latest release" do
       @changelog.releases.should == [
         Blammo::Release.new(@time_str, @commits)
@@ -66,8 +84,16 @@ describe Blammo::Changelog do
   end
 
   describe "#to_yaml" do
+    before do
+      stub(Blammo::Changelog).parse_releases {@releases}
+      stub(@releases).to_yaml
+
+      @changelog = Blammo::Changelog.new("changelog.yml")
+      @changelog.to_yaml
+    end
+
     it "should return the releases YAML" do
-      pending
+      @releases.should have_received.to_yaml({})
     end
   end
 
