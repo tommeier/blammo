@@ -11,17 +11,22 @@ module Blammo
       @commits << commit
     end
 
-    def to_yaml(options = {})
-      {@name => @commits}.to_yaml(options)
-    end
-
     def to_s
       @name
     end
 
+    def to_yaml(options = {})
+      {@name => @commits}.to_yaml(options)
+    end
+
     def each_commit(tag = nil, &block)
-      tag = tag.to_sym
-      commits = @commits.select {|commit| commit.tag == tag} if tag
+      if tag
+        tag     = tag.to_sym
+        commits = @commits.select {|commit| commit.tag == tag}
+      else
+        commits = @commits
+      end
+
       commits.each {|commit| block.call(commit)}
     end
   end

@@ -4,16 +4,25 @@ describe Blammo::Commit do
   before do
     @sha     = "foo"
     @message = "[ADDED] bar"
+    @commit  = Blammo::Commit.new(@sha, @message)
+  end
+
+  describe "#initialize" do
+    subject {@commit}
+
+    its(:sha)     {should == @sha}
+    its(:message) {should == "bar"}
+    its(:tag)     {should == :added}
   end
 
   describe "#to_s" do
-    subject {Blammo::Commit.new(@sha, @message).to_s}
+    subject {@commit.to_s}
     it {should == "bar"}
   end
 
   describe "#to_yaml" do
     context "with a SHA" do
-      subject {Blammo::Commit.new(@sha, @message).to_yaml}
+      subject {@commit.to_yaml}
       it {should == {@sha => @message}.to_yaml}
     end
 

@@ -54,7 +54,7 @@ describe Blammo::Git do
         stub(@log).each.yields(@commit)
       end
 
-      it "should yield each commit in the log" do
+      it "should yield each commit" do
         Blammo::Git.each_commit(@log) do |sha, message|
           sha.should     == "foo"
           message.should == "bar"
