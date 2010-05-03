@@ -18,6 +18,10 @@ module Blammo
       end
     end
 
+    def to_s
+      @message
+    end
+
     def to_yaml(options = {})
       message = "[#{@tag.to_s.upcase}] #{@message}"
 
@@ -26,10 +30,6 @@ module Blammo
       else
         message
       end.to_yaml(options)
-    end
-
-    def to_s
-      @message
     end
 
     def self.parse_tag(value)
