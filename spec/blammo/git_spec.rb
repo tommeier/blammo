@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Blammo::Git do
   before do
-    @git  = Git.init
-    @log  = Git::Log.new(@git)
+    @git = Git.init
+    @log = Git::Log.new(@git)
 
     stub(Git).open(anything) {@git}
     stub(Git::Log).new(anything, numeric) {@log}
@@ -11,11 +11,12 @@ describe Blammo::Git do
 
   describe ".commits" do
     before do
-      stub(@log).between.with_any_args
-      stub(Blammo::Git).each_commit(anything)
-
       @path = "foo/bar"
-      Blammo::Git.commits(@path)
+
+      stub(@log).between.with_any_args
+
+      Blammo::Git.each_commit(@path) do
+      end
     end
 
     it "should open the repo at the given path" do
@@ -26,38 +27,39 @@ describe Blammo::Git do
       Git::Log.should have_received.new(@git, 10)
     end
 
-    it "should loop through each commit in the log" do
-      Blammo::Git.should have_received.each_commit(@log)
-    end
-
     it "should not scope the log" do
       @log.should_not have_received.between.with_any_args
     end
 
     context "with a SHA" do
       before do
-        @sha = "abcd"
-        Blammo::Git.commits(@path, @sha)
+        @since = "abcd"
+
+        Blammo::Git.each_commit(@path, @since) do
+        end
       end
 
       it "should scope the log" do
-        @log.should have_received.between(@sha, "head")
+        @log.should have_received.between(@since, "head")
       end
     end
-  end
 
-  describe ".each_commit" do
-    before do
-      @commit = Object.new
-      stub(@log).each.yields(@commit)
-    end
+    context "with commits" do
+      before do
+        @commit = Object.new
 
-    it "should yield each commit in the log" do
-      commits = []
-      Blammo::Git.each_commit(@log) do |commit|
-        commits << commit
+        stub(@commit).sha {"foo"}
+        stub(@commit).message {" bar "}
+
+        stub(@log).each.yields(@commit)
       end
-      commits.should include(@commit)
+
+      it "should yield each commit in the log" do
+        Blammo::Git.each_commit(@log) do |sha, message|
+          sha.should     == "foo"
+          message.should == "bar"
+        end
+      end
     end
   end
 end

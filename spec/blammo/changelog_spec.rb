@@ -58,44 +58,26 @@ describe Blammo::Changelog do
 
   describe "#refresh" do
     before do
-      @dir = "foo/bar"
-      @last_sha = "867b20e695e2b3770e150b0e844cdb6addd48ba4"
-
-      commits = @tagged_commits + @non_tagged_commits
-      stub(Blammo::Changelog).last_sha {@last_sha}
-      stub(Blammo::Git).commits {commits}
-
+      @dir       = "foo/bar"
+      @last_sha  = "867b20e695e2b3770e150b0e844cdb6addd48ba4"
       @changelog = Blammo::Changelog.new("changelog.yml")
+      @time_str  = "20100501155804"
+      @time      = Time.parse(@time_str)
 
-      @time_str = "20100501155804"
-      @time     = Time.parse(@time_str)
-
-      @release = Blammo::Release.new(@time_str)
-
-      stub(Blammo::Release).new {@release}
-      stub(@release).add_commit
+      stub(Blammo::Changelog).last_sha {@last_sha}
+      stub(Blammo::Git).each_commit
 
       Timecop.freeze(@time) do
         @changelog.refresh(@dir)
       end
     end
 
-    it "should load commits since the last SHA" do
-      Blammo::Git.should have_received.commits(@dir, @last_sha)
+    it "should process commits since the last SHA" do
+      Blammo::Git.should have_received.each_commit(@dir, @last_sha)
     end
 
     it "should name the release with the current timestamp" do
       pending
-    end
-
-    it "should only add tagged commits to the latest release" do
-      @tagged_commits.each do |commit|
-        @release.should have_received.add_commit(commit)
-      end
-
-      @non_tagged_commits.each do |commit|
-        @release.should_not have_received.add_commit(commit)
-      end
     end
   end
 
