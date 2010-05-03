@@ -18,7 +18,7 @@ module Blammo
       Git.each_commit(dir, since) do |sha, message|
         if message =~ Commit::COMMIT_RE
           commit = Commit.new(sha, message)
-          release.add_commit(commit)
+          release.add_commit(commit) if commit.tag
         end
       end
 

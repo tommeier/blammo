@@ -32,8 +32,9 @@ module Blammo
       @message
     end
 
-    def self.parse_tag(tag)
-      TAGS_RE_MAP.detect {|_, r| tag =~ r}.first
+    def self.parse_tag(value)
+      tag, regexp = TAGS_RE_MAP.detect {|tag, regexp| value =~ regexp}
+      tag
     end
   end
 end
