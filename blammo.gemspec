@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blammo}
-  s.version = "0.2.3"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Josh Bassett"]
-  s.date = %q{2010-06-10}
+  s.date = %q{2010-06-17}
   s.default_executable = %q{blam}
   s.description = %q{      Changelog generator.
 }
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/blam",
+     "blammo.gemspec",
      "lib/blammo.rb",
      "lib/blammo/alone.rb",
      "lib/blammo/changelog.rb",
