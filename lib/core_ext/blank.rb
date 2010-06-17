@@ -1,11 +1,17 @@
 class String
-  def blank?
-    empty?
+  #Overwrites the command in Rails and causes odd behaviour
+  unless method_defined?(:blank?)
+    def blank?
+      empty?
+    end
   end
 end
 
 class NilClass
-  def blank?
-    true
+  #Overwrites the command in Rails and causes odd behaviour
+  unless method_defined?(:blank?)
+    def blank?
+      true
+    end
   end
 end
