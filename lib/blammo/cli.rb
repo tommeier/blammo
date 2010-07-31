@@ -9,21 +9,23 @@ module Blammo
     end
 
     desc "generate [PATH]", %q(Generates a changelog.yml file (short-cut alias: "g"))
-    method_options :force => :boolean
+    method_options %w(force -f) => :boolean
     map "g" => :generate
     def generate(path = "changelog.yml")
       path      = File.expand_path(path, destination_root)
       changelog = Changelog.new(path)
+
       changelog.refresh(destination_root)
       create_file(path, changelog.to_yaml)
     end
 
     desc "render [PATH]", %q(Renders the given changelog.yml file (short-cut alias: "r"))
-    method_options :force => :boolean
+    method_options %w(force -f) => :boolean
     map "r" => :render
     def render(path = "changelog.yml")
       @changelog = Changelog.new(path)
       source     = "../../templates/changelog.html.erb"
+
       template(source, "changelog.html")
     end
   end
