@@ -4,9 +4,8 @@ gem 'git'
 gem 'thor'
 
 group :development do
-  gem 'hirb'
-  gem 'jeweler'
   gem 'rake'
+  gem 'rcov'
 end
 
 group :test do

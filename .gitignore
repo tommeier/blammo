@@ -1,5 +1,3 @@
-.bundle
-changelog.html
-changelog.yml
-pkg
-vendor
+coverage
+*.gem
+changelog.*
