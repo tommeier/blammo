@@ -9,11 +9,10 @@ module Blammo
       @releases      = Changelog.parse_releases(releases_hash)
     end
 
-    def refresh(dir)
-      # TODO: allow release name to be specified from CLI.
-      name     = Time.now.strftime("%Y%m%d%H%M%S")
-      release  = Release.new(name)
-      since    = Changelog.last_sha(@releases)
+    def refresh(dir, name = nil)
+      name    ||= Time.now.strftime("%Y%m%d%H%M%S")
+      release   = Release.new(name)
+      since     = Changelog.last_sha(@releases)
 
       Git.each_commit(dir, since) do |sha, message|
         if message =~ Commit::COMMIT_RE

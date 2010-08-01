@@ -76,8 +76,16 @@ describe Blammo::Changelog do
       Blammo::Git.should have_received.each_commit(@dir, @last_sha)
     end
 
-    it "should name the release with the current timestamp" do
-      pending
+    context "without a name" do
+      it "should set the release name to the current timestamp" do
+        pending
+      end
+    end
+
+    context "with a name" do
+      it "should set the release name" do
+        pending
+      end
     end
   end
 
