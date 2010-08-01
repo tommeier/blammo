@@ -9,6 +9,6 @@ envs << ENV['BLAMMO_ENV'].downcase.to_sym if ENV['BLAMMO_ENV']
 Bundler.setup(*envs)
 
 path = File.join(File.expand_path(File.dirname(__FILE__)), '..')
-$:.unshift(path)
+$LOAD_PATH.unshift(path)
 
 require 'blammo'
