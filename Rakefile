@@ -8,21 +8,19 @@ task :console do
   exec("irb -I lib -r blammo/alone")
 end
 
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
+Spec::Rake::SpecTask.new(:spec)
 
 namespace :rcov do
-  Spec::Rake::SpecTask.new(:all) do |spec|
-    spec.libs << 'lib' << 'spec'
-    spec.pattern = 'spec/**/*_spec.rb'
-    spec.rcov = true
+  Spec::Rake::SpecTask.new(:spec) do |t|
+    t.rcov = true
+    t.rcov_opts = %w(--exclude gems\/*,spec\/*,features\/*,.bundle\/* --aggregate coverage.data)
   end
 
   RCov::VerifyTask.new(:verify) do |t|
+    # Allow the coverage to exceed the threshold.
+    t.require_exact_threshold = false
+
     t.threshold = 47.46
-    t.index_html = 'coverage/index.html'
   end
 end
 
