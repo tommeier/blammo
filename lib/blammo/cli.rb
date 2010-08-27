@@ -23,7 +23,7 @@ module Blammo
     map "r" => :render
     def render(path = "changelog.yml")
       @changelog = Changelog.new(path)
-      source     = "../../templates/changelog.html.erb"
+      source     = File.expand_path("../../templates/changelog.html.erb", self.class.source_root)
       template(source, "changelog.html")
     end
   end

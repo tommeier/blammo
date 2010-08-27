@@ -11,14 +11,14 @@ Gem::Specification.new do |s|
   s.email       = "josh.bassett@gmail.com"
   s.description = "Changelog generator."
   s.summary     = "CHANGELOG from Blammo."
-  s.homepage = "http://github.com/NZX/billing-model"
+  s.homepage    = "http://github.com/nullobject/blammo"
 
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "blammo"
 
   s.add_bundler_dependencies
 
-  s.files        = Dir.glob('{bin,lib}/**/*') + %w(LICENSE README.md)
+  s.files        = Dir.glob('{bin,lib,templates}/**/*') + %w(LICENSE README.md)
   s.executables  = ['blam']
   s.require_path = 'lib'
 end
