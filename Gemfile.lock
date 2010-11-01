@@ -1,7 +1,6 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    fancypath (0.5.13)
     git (1.2.5)
     hirb (0.3.2)
     rake (0.8.7)
@@ -16,7 +15,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.0.0)
-  fancypath (~> 0.5.13)
   git (~> 1.2.5)
   hirb (~> 0.3.2)
   rake (~> 0.8.7)

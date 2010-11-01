@@ -1,7 +1,5 @@
-ENV['BLAMMO_ENV'] ||= 'development'
-
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$:.unshift(File.dirname(__FILE__))
+$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'blammo/alone'
 require 'rr'

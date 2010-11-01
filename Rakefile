@@ -1,4 +1,7 @@
-require 'rubygems'
+$:.unshift(File.join(File.dirname(__FILE__), 'lib'))
+
+require 'blammo/alone'
+
 require 'rake'
 require 'spec/rake/spectask'
 require 'spec/rake/verify_rcov'

@@ -1,8 +1,7 @@
 source :rubygems
 
-gem 'fancypath', '~> 0.5.13'
-gem 'git',       '~> 1.2.5'
-gem 'thor',      '~> 0.14.0'
+gem 'git',  '~> 1.2.5'
+gem 'thor', '~> 0.14.0'
 
 group :development do
   gem 'bundler', '~> 1.0.0'
