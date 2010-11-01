@@ -22,12 +22,12 @@ module Blammo
     def each_commit(tag = nil, &block)
       if tag
         tag     = tag.to_sym
-        commits = @commits.select {|commit| commit.tag == tag}
+        commits = @commits.select {|commit| commit.tag == tag }
       else
         commits = @commits
       end
 
-      commits.each {|commit| block.call(commit)}
+      commits.each {|commit| block.call(commit) }
     end
   end
 end

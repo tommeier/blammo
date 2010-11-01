@@ -14,7 +14,7 @@ module Blammo
 
       begin
         log.skip(chunk * CHUNK_SIZE)
-        log.each {|commit| block.call(commit.sha, commit.message.strip)}
+        log.each {|commit| block.call(commit.sha, commit.message.strip) }
         chunk += 1
       end until log.size == 0
     end

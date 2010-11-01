@@ -35,11 +35,11 @@ describe Blammo::Changelog do
 
   describe "#initialize" do
     before do
-      @path = "changelog.yml"
+      @path = "/tmp/changelog.yml"
 
-      stub(Blammo::Changelog).parse_releases {[]}
-      stub(File).exists? {true}
-      stub(YAML).load_file {[]}
+      stub(Blammo::Changelog).parse_releases { [] }
+      stub(File).exists? { true }
+      stub(YAML).load_file { [] }
 
       Blammo::Changelog.new(@path)
     end
@@ -60,38 +60,62 @@ describe Blammo::Changelog do
     before do
       @dir       = "foo/bar"
       @last_sha  = "867b20e695e2b3770e150b0e844cdb6addd48ba4"
-      @changelog = Blammo::Changelog.new("changelog.yml")
+      @changelog = Blammo::Changelog.new("/tmp/changelog.yml")
       @time_str  = "20100501155804"
       @time      = Time.parse(@time_str)
 
-      stub(Blammo::Changelog).last_sha {@last_sha}
+      stub(Blammo::Changelog).last_sha { @last_sha }
       stub(Blammo::Git).each_commit
 
-      Timecop.freeze(@time) do
-        @changelog.refresh(@dir)
+      stub.proxy(Blammo::Release).new do |release|
+        @release = release
+        stub(@release).commits { [] }
       end
-    end
 
-    it "should process commits since the last SHA" do
-      Blammo::Git.should have_received.each_commit(@dir, @last_sha)
+      stub(@changelog).add_release
     end
 
     context "without a name" do
-      it "should set the release name to the current timestamp" do
-        pending
+      before do
+        Timecop.freeze(@time) do
+          @changelog.refresh(@dir)
+        end
       end
+
+      subject { @release }
+      its(:name) { should == @time_str }
     end
 
     context "with a name" do
-      it "should set the release name" do
-        pending
+      before { @changelog.refresh(@dir, "baz") }
+      subject { @release }
+      its(:name) { should == "baz" }
+    end
+
+    context "without commits" do
+      before { @changelog.refresh(@dir) }
+      subject { @changelog }
+      it { should_not have_received.add_release(@release) }
+    end
+
+    context "with commits" do
+      before do
+        stub.proxy(Blammo::Release).new do |release|
+          @release = release
+          stub(@release).commits { [:foo] }
+        end
+
+        @changelog.refresh(@dir)
       end
+
+      subject { @changelog }
+      it { should have_received.add_release(@release) }
     end
   end
 
   describe "#to_yaml" do
     before do
-      stub(Blammo::Changelog).parse_releases {@releases}
+      stub(Blammo::Changelog).parse_releases { @releases }
       stub(@releases).to_yaml
 
       @changelog = Blammo::Changelog.new("changelog.yml")

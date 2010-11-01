@@ -8,10 +8,10 @@ describe Blammo::Release do
   end
 
   describe "#initialize" do
-    subject {@release}
+    subject { @release }
 
-    its(:name)    {should == @name}
-    its(:commits) {should == @commits}
+    its(:name)    { should == @name }
+    its(:commits) { should == @commits }
   end
 
   describe "#add_commit" do
@@ -24,18 +24,18 @@ describe Blammo::Release do
   end
 
   describe "#to_s" do
-    subject {@release.to_s}
-    it {should == @name}
+    subject { @release.to_s }
+    it { should == @name }
   end
 
   describe "#to_yaml" do
-    subject {@release.to_yaml}
-    it {should == {@name => @commits}.to_yaml}
+    subject { @release.to_yaml }
+    it { should == {@name => @commits}.to_yaml }
   end
 
   describe "#each_commit" do
     before do
-      stub(@tagged_commit   = Object.new).tag {:foo}
+      stub(@tagged_commit   = Object.new).tag { :foo }
       stub(@untagged_commit = Object.new).tag
 
       @commits = [@tagged_commit, @untagged_commit]

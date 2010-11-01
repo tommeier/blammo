@@ -1,5 +1,6 @@
 module Blammo
   class Commit
+    # e.g. [FOO] bar
     COMMIT_RE = /^(\[\w+\]) (.*)/
 
     TAGS_RE_MAP = {
@@ -33,7 +34,7 @@ module Blammo
     end
 
     def self.parse_tag(value)
-      tag, regexp = TAGS_RE_MAP.detect {|tag, regexp| value =~ regexp}
+      tag, regexp = TAGS_RE_MAP.detect {|tag, regexp| value =~ regexp }
       tag
     end
   end

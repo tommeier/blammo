@@ -5,8 +5,8 @@ describe Blammo::Git do
     @git = Git.init
     @log = Git::Log.new(@git)
 
-    stub(Git).open(anything) {@git}
-    stub(Git::Log).new(anything, numeric) {@log}
+    stub(Git).open(anything) { @git }
+    stub(Git::Log).new(anything, numeric) { @log }
   end
 
   describe ".commits" do
@@ -16,6 +16,7 @@ describe Blammo::Git do
       stub(@log).between.with_any_args
 
       Blammo::Git.each_commit(@path) do
+        # Do nothing.
       end
     end
 
@@ -48,8 +49,8 @@ describe Blammo::Git do
       before do
         @commit = Object.new
 
-        stub(@commit).sha {"foo"}
-        stub(@commit).message {" bar "}
+        stub(@commit).sha { "foo" }
+        stub(@commit).message { " bar " }
 
         stub(@log).each.yields(@commit)
       end
