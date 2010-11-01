@@ -3,18 +3,19 @@ $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'blammo/alone'
 
 require 'rake'
-require 'spec/rake/spectask'
-require 'spec/rake/verify_rcov'
+require 'rspec/core'
+require 'rspec/core/rake_task'
+require 'verify_rcov'
 
 desc "Launch an IRB session with the environment loaded"
 task :console do
   exec("irb -I lib -r blammo/alone")
 end
 
-Spec::Rake::SpecTask.new(:spec)
+RSpec::Core::RakeTask.new
 
 namespace :rcov do
-  Spec::Rake::SpecTask.new(:spec) do |t|
+  RSpec::Core::RakeTask.new do |t|
     t.rcov = true
     t.rcov_opts = %w(--exclude gems\/*,spec\/*,features\/*,.bundle\/* --aggregate coverage.data)
   end
