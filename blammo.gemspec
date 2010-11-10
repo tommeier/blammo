@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'thor', '~> 0.14.0'
 
   s.add_development_dependency 'bundler',        '~> 1.0.3'
+  s.add_development_dependency 'capybara',       '~> 0.4.0'
   s.add_development_dependency 'cucumber',       '~> 0.9.4'
   s.add_development_dependency 'cucumber-rails', '~> 0.3.2'
   s.add_development_dependency 'hirb',           '~> 0.3.2'

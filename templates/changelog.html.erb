@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
   <body>
-    <h1>Changelog</h1>
+    <header>
+      <h1>Changelog</h1>
+    </header>
 
     <%- @changelog.releases.each do |release| -%>
-      <section id="release-<%= release %>">
-        <h2>Release <%= release %></h2>
+      <article id="release-<%= release %>">
+        <header>
+          <h1>Release <%= release %></h1>
+        </header>
 
         <ul>
           <%- %w(added changed fixed).each do |tag| -%>
@@ -17,7 +21,7 @@
             <%- end -%>
           <%- end -%>
         </ul>
-      </section>
+      </article>
     <%- end -%>
   </body>
 </html>

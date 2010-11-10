@@ -1,3 +1,12 @@
+INPUT_PATH  = '/tmp/changelog.yml'
+OUTPUT_PATH = '/tmp/changelog.html'
+
+# Fakes out the webrat response_body method and loads the body from the
+# rendered changelog.
+def response_body
+  open(OUTPUT_PATH).read
+end
+
 Given /^a changelog exists with the following commits:$/ do |table|
   # Remap the table headers to be lower-case strings.
   table.map_headers!(table.headers.inject({}) {|hash, header|
@@ -20,26 +29,25 @@ Given /^a changelog exists with the following commits:$/ do |table|
     commits << commit
   end
 
-  open('/tmp/changelog.yml', 'w') do |file|
+  open(INPUT_PATH, 'w') do |file|
     file << releases.to_yaml
   end
 end
 
 When /^I render the changelog as HTML$/ do
   options = {
-    :quiet  => true,
-    :force  => true,
-    :input  => '/tmp/changelog.yml',
-    :output => '/tmp/changelog.html'
+    :quiet  => true,       # Stop thor from logging to stdout
+    :force  => true,       # Don't prompt the user if the file already exists
+    :input  => INPUT_PATH,
+    :output => OUTPUT_PATH
   }
   Blammo::CLI.new({}, options).render
 end
 
-def response_body
-  open('/tmp/changelog.html').read
-end
-
 Then /^I should see the following items within "([^\"]+)":$/ do |selector, table|
+  items = tableish("#{selector} li", lambda {|li| [li] })
+  items.map! {|item| [item.first.gsub(/\s+/, " ")] }
+
   # Match the tables exactly.
   options = {
     :missing_row => true,
@@ -47,9 +55,6 @@ Then /^I should see the following items within "([^\"]+)":$/ do |selector, table
     :missing_col => true,
     :surplus_col => true
   }
-
-  items = tableish("#{selector} li", lambda {|li| [li] })
-  items.map! {|item| [item.first.gsub(/\s+/, " ")] }
 
   table.diff!(items, options)
 end
