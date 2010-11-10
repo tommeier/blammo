@@ -1,34 +1,51 @@
 require 'spec_helper'
 
 describe Blammo::Commit do
-  before do
-    @sha     = "foo"
-    @message = "[ADDED] bar"
-    @commit  = Blammo::Commit.new(@sha, @message)
-  end
+  let(:sha)     { "foo" }
+  let(:message) { "[ADDED] bar" }
+  let(:commit)  { Blammo::Commit.new(sha, message) }
+
+  subject { commit }
 
   describe "#initialize" do
-    subject {@commit}
 
-    its(:sha)     { should == @sha }
+    its(:sha)     { should == sha }
     its(:message) { should == "bar" }
     its(:tag)     { should == :added }
   end
 
+  describe "#valid?" do
+    subject { commit.valid? }
+
+    context "with a message and tag" do
+      it { should be_true }
+    end
+
+    context "without a message" do
+      let(:message) { nil }
+      it { should be_false }
+    end
+
+    context "without a tag" do
+      let(:message) { "bar" }
+      it { should be_false }
+    end
+  end
+
   describe "#to_s" do
-    subject { @commit.to_s }
+    subject { commit.to_s }
     it { should == "bar" }
   end
 
   describe "#to_yaml" do
     context "with a SHA" do
-      subject { @commit.to_yaml }
-      it { should == {@sha => @message}.to_yaml }
+      subject { commit.to_yaml }
+      it { should == {sha => message}.to_yaml }
     end
 
     context "without a SHA" do
-      subject { Blammo::Commit.new(nil, @message).to_yaml }
-      it { should == @message.to_yaml }
+      subject { Blammo::Commit.new(nil, message).to_yaml }
+      it { should == message.to_yaml }
     end
   end
 

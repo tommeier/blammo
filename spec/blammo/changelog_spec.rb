@@ -21,17 +21,18 @@ describe Blammo::Changelog do
         Blammo::Commit.new("3b183d9d1ec270fc63ef54695db1cd2df5d597cf", "[FIXED] commit three"),
       ])
     ]
-
-    @tagged_commits = [
-      Blammo::Commit.new("867b20e695e2b3770e150b0e844cdb6addd48ba4", "[ADDED] Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
-      Blammo::Commit.new("3b183d9d1ec270fc63ef54695db1cd2df5d597cf", "[CHANGED] Fusce accumsan laoreet semper."),
-      Blammo::Commit.new("a7324e86b19ec68249ca0f9752a3277b0ad8c0c2", "[FIXED] Nunc ut magna eget libero porttitor mattis."),
-    ]
-
-    @non_tagged_commits = [
-      Blammo::Commit.new("5fd6e8dea3d8c79700fccb324ba4a9b00918afa3", "Donec rhoncus lorem sed lorem vestibulum ultricies.")
-    ]
   end
+
+  let(:changelog) { Blammo::Changelog.new("/tmp/changelog") }
+
+  let(:name)    { "1.0.0" }
+  let(:release) { Blammo::Release.new(name) }
+
+  let(:sha)     { "foo" }
+  let(:message) { "[ADDED] bar" }
+  let(:commit)  { Blammo::Commit.new(sha, message) }
+
+  subject { changelog }
 
   describe "#initialize" do
     before do
@@ -56,60 +57,42 @@ describe Blammo::Changelog do
     end
   end
 
-  describe "#refresh" do
+  describe "#update" do
+    let(:dir)   { "foo/bar" }
+    let(:name)  { "1.0.0" }
+    let(:since) { "867b20e695e2b3770e150b0e844cdb6addd48ba4" }
+
     before do
-      @dir       = "foo/bar"
-      @last_sha  = "867b20e695e2b3770e150b0e844cdb6addd48ba4"
-      @changelog = Blammo::Changelog.new("/tmp/changelog.yml")
-      @time_str  = "20100501155804"
-      @time      = Time.parse(@time_str)
+      release
 
-      stub(Blammo::Changelog).last_sha { @last_sha }
-      stub(Blammo::Git).each_commit
+      stub(Blammo::Changelog).last_sha { since }
+      stub(Blammo::Release).new(name) { release }
+      stub(release).update(dir, since)
+      stub(changelog).add_release
 
-      stub.proxy(Blammo::Release).new do |release|
-        @release = release
-        stub(@release).commits { [] }
-      end
-
-      stub(@changelog).add_release
+      changelog.update(dir, name)
     end
 
-    context "without a name" do
+    it { should have_received.add_release(release) }
+  end
+
+  describe "#add_release" do
+    context "with a non-empty release" do
       before do
-        Timecop.freeze(@time) do
-          @changelog.refresh(@dir)
-        end
+        stub(release).empty? { false }
+        changelog.add_release(release)
       end
 
-      subject { @release }
-      its(:name) { should == @time_str }
+      its(:releases) { should include(release) }
     end
 
-    context "with a name" do
-      before { @changelog.refresh(@dir, "baz") }
-      subject { @release }
-      its(:name) { should == "baz" }
-    end
-
-    context "without commits" do
-      before { @changelog.refresh(@dir) }
-      subject { @changelog }
-      it { should_not have_received.add_release(@release) }
-    end
-
-    context "with commits" do
+    context "with an empty release" do
       before do
-        stub.proxy(Blammo::Release).new do |release|
-          @release = release
-          stub(@release).commits { [:foo] }
-        end
-
-        @changelog.refresh(@dir)
+        stub(release).empty? { true }
+        changelog.add_release(release)
       end
 
-      subject { @changelog }
-      it { should have_received.add_release(@release) }
+      its(:releases) { should_not include(release) }
     end
   end
 

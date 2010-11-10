@@ -1,4 +1,5 @@
 require 'core_ext/blank'
+require 'core_ext/present'
 
 require 'blammo/changelog'
 require 'blammo/commit'

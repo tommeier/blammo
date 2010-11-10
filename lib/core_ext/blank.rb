@@ -1,5 +1,12 @@
+class NilClass
+  unless method_defined?(:blank?)
+    def blank?
+      true
+    end
+  end
+end
+
 class String
-  # Play nice with Rails.
   unless method_defined?(:blank?)
     def blank?
       empty?
@@ -7,11 +14,10 @@ class String
   end
 end
 
-class NilClass
-  # Play nice with Rails.
+class Symbol
   unless method_defined?(:blank?)
     def blank?
-      true
+      false
     end
   end
 end

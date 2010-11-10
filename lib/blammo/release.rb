@@ -1,14 +1,31 @@
 module Blammo
+  # A release is a collection of commits in the changelog.
+  #
+  # When you tell blammo to update, it creates a new release with the most
+  # recent commits.
   class Release
     attr_reader :name, :commits
 
-    def initialize(name, commits = [])
+    def initialize(name = nil, commits = [])
+      name = Time.now.strftime("%Y%m%d%H%M%S") if name.blank?
+
       @name    = name
       @commits = commits
     end
 
+    def update(dir, since)
+      Git.each_commit(dir, since) do |sha, message|
+        commit = Commit.new(sha, message)
+        add_commit(commit)
+      end
+    end
+
     def add_commit(commit)
-      @commits << commit
+      @commits << commit if commit.valid?
+    end
+
+    def empty?
+      @commits.empty?
     end
 
     def to_s

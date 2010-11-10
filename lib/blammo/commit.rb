@@ -1,8 +1,11 @@
 module Blammo
+  # A commit represents a commit for a release in the changelog.
   class Commit
+    # Matches a commit message with a tag prefix.
     # e.g. [FOO] bar
-    COMMIT_RE = /^(\[\w+\]) (.*)/
+    MESSAGE_RE = /^(\[\w+\]) (.*)/
 
+    # The supported tags and their possible representations.
     TAGS_RE_MAP = {
       :added   => /(ADDED|NEW)/,
       :changed => /(CHANGED)/,
@@ -14,9 +17,13 @@ module Blammo
     def initialize(sha, message)
       @sha = sha
 
-      if message && message.match(Commit::COMMIT_RE)
+      if message && message.match(Commit::MESSAGE_RE)
         @tag, @message = Commit.parse_tag($1), $2
       end
+    end
+
+    def valid?
+      @message.present? && @tag.present?
     end
 
     def to_s

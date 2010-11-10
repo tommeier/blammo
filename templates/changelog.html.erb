@@ -4,18 +4,20 @@
     <h1>Changelog</h1>
 
     <%- @changelog.releases.each do |release| -%>
-      <h2>Release <%= release %></h2>
+      <section id="release-<%= release %>">
+        <h2>Release <%= release %></h2>
 
-      <ul>
-        <%- %w(added changed fixed).each do |tag| -%>
-          <%- release.each_commit(tag) do |commit| -%>
-            <li>
-              <span class="<%= tag %>"><%= tag.to_s.upcase %></span>
-              <%= commit %>
-            </li>
+        <ul>
+          <%- %w(added changed fixed).each do |tag| -%>
+            <%- release.each_commit(tag) do |commit| -%>
+              <li>
+                <span class="<%= tag %>"><%= tag.to_s.upcase %></span>
+                <%= commit %>
+              </li>
+            <%- end -%>
           <%- end -%>
-        <%- end -%>
-      </ul>
+        </ul>
+      </section>
     <%- end -%>
   </body>
 </html>

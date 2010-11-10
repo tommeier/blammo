@@ -11,29 +11,21 @@ module Blammo
   class Changelog
     attr_reader :releases
 
-    def initialize(path)
-      releases_hash  = File.exists?(path) ? YAML.load_file(path) : []
-      @releases      = Changelog.parse_releases(releases_hash)
+    def initialize(path = nil)
+      releases  = File.exists?(path) ? YAML.load_file(path) : []
+      @releases = Changelog.parse_releases(releases)
     end
 
-    # Adds a new release with an optional name containing the commits since the last relese from the git repository in the given directory.
-    def refresh(dir, name = nil)
-      name    ||= Time.now.strftime("%Y%m%d%H%M%S")
-      since     = Changelog.last_sha(@releases)
-      release   = Release.new(name)
-
-      Git.each_commit(dir, since) do |sha, message|
-        if message =~ Commit::COMMIT_RE
-          commit = Commit.new(sha, message)
-          release.add_commit(commit) if commit.tag
-        end
-      end
-
-      add_release(release) unless release.commits.empty?
+    # Updates the changelog from the git repository in the given directory.
+    def update(dir, name = nil)
+      since   = Changelog.last_sha(@releases)
+      release = Release.new(name)
+      release.update(dir, since)
+      add_release(release)
     end
 
     def add_release(release)
-      @releases.unshift(release)
+      @releases.unshift(release) unless release.empty?
     end
 
     def to_yaml(options = {})
@@ -44,7 +36,7 @@ module Blammo
       commit = nil
 
       releases.each do |release|
-        commit = release.commits.detect {|commit| commit.sha}
+        commit = release.commits.detect {|commit| commit.sha }
         break if commit
       end
 
